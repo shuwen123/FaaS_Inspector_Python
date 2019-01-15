@@ -11,6 +11,7 @@ import logging
 import os
 import subprocess
 import re
+import uuid
 
 # my_handler is the lambda function on aws that will be called
 # event: is the JSON object or message that passed in
@@ -42,7 +43,21 @@ def my_handler(event, context):
     result = p.read()
     temp = re.sub('[\n\t]','', result)
     cpuType = temp.replace('model name: ', '')
-
+    myUuid = ''
+    newContainer = 0
+    if os.path.isfile('/tmp/container-id'):
+        stampFile = open('/tmp/container-id', 'r')
+        stampID = stampFile.readline()
+        myUuid = stampID
+        stampFile.close()
+        print('im here! read uuid from file!')
+        newContainer = 1
+    else:
+        stampFile = open('/tmp/container-id', 'w')
+        myUuid = str(uuid.uuid4()) # uuid4() generates a random uuid
+        stampFile.write(myUuid)
+        stampFile.close()
+        print('im here! write uuid to the file!')
     # using try catch
     try:
         name = event['name']
@@ -51,7 +66,9 @@ def my_handler(event, context):
                 'message' : message,
                 'name' : name,
                 'CPU' : cpuType,
-                'vmUpTime' : vmbt 
+                'vmuptime' : vmbt,
+                'uuid' : myUuid,
+                'newcontainer' : newContainer
                 }
     except:
         logger = logging.getLogger()
