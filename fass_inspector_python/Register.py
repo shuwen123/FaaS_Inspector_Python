@@ -56,7 +56,7 @@ def profileVM():
     cpuType = __getVmCpuStat()
     myUuid, newContainer = __stampContainer()
     return {
-                'CPU' : cpuType,
+                'cpuType' : cpuType,
                 'vmuptime' : vmbt,
                 'uuid' : myUuid,
                 'newcontainer' : newContainer
