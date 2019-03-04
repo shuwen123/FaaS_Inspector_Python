@@ -58,11 +58,10 @@ def profileVM():
     vmbt = __getUpTime()
     cpuType = __getVmCpuStat()
     myUuid, newContainer = __stampContainer()
-    fwft = time.time()
     return {
                 'cpuType' : cpuType,
                 'vmuptime' : vmbt,
                 'uuid' : myUuid,
                 'newcontainer' : newContainer,
-                'frameworkRuntime' : (fwft - fwst) * 1000
+                'frameworkRuntime' : (time.time() - fwst) * 1000
                 }
