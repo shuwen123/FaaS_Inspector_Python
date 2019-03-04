@@ -13,6 +13,8 @@ import subprocess
 import re
 import uuid
 import shlex
+import time
+
 
 def __getUpTime():
     # https://www.quora.com/Whats-the-difference-between-os-system-and-subprocess-call-in-Python
@@ -52,12 +54,15 @@ def __stampContainer():
 # event: is the JSON object or message that passed in.
 # return JSON/Dictionary with customized fields.
 def profileVM():
+    fwst = time.time()
     vmbt = __getUpTime()
     cpuType = __getVmCpuStat()
     myUuid, newContainer = __stampContainer()
+    fwft = time.time()
     return {
                 'cpuType' : cpuType,
                 'vmuptime' : vmbt,
                 'uuid' : myUuid,
-                'newcontainer' : newContainer
+                'newcontainer' : newContainer,
+                'frameworkRuntime' : (fwft - fwst) * 1000
                 }
