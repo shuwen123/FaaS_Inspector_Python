@@ -71,12 +71,12 @@ def profileVM():
                 'uuid' : myUuid,
                 'newcontainer' : newContainer,
                 'frameworkRuntime' : (time.time() - fwst) * 1000,
-                'cpuusr' : cpuMetrics[1],
-                'cpunice' : cpuMetrics[2],
-                'cpukrn' : cpuMetrics[3],
-                'cpuidle' : cpuMetrics[4],
-                'cpuiowait' : cpuMetrics[5],
-                'cpuirq' : cpuMetrics[6],
-                'cpusoftirq' : cpuMetrics[7],
-                'cpusteal' : cpuMetrics[8]
+                'cpuusr' : int(cpuMetrics[1]),
+                'cpunice' : int(cpuMetrics[2]),
+                'cpukrn' : int(cpuMetrics[3]),
+                'cpuidle' : int(cpuMetrics[4]),
+                'cpuiowait' : int(cpuMetrics[5]),
+                'cpuirq' : int(cpuMetrics[6]),
+                'cpusoftirq' : int(cpuMetrics[7]),
+                'cpusteal' : int(cpuMetrics[8])
                 }
