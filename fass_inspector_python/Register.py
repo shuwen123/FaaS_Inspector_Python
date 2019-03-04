@@ -32,6 +32,12 @@ def __getVmCpuStat():
     result = p.read()
     temp = re.sub('[\n\t]','', result)
     return temp.replace('model name: ', '')
+    
+def __getCPUMetrics():
+    p = os.popen('cat /proc/stat | grep "^cpu" | head -1')
+    result = p.read()
+    result = result.split()
+    return result
 
 def __stampContainer():
     myUuid = ''
@@ -58,10 +64,19 @@ def profileVM():
     vmbt = __getUpTime()
     cpuType = __getVmCpuStat()
     myUuid, newContainer = __stampContainer()
+    cpuMetrics = __getCPUMetrics()
     return {
                 'cpuType' : cpuType,
                 'vmuptime' : vmbt,
                 'uuid' : myUuid,
                 'newcontainer' : newContainer,
-                'frameworkRuntime' : (time.time() - fwst) * 1000
+                'frameworkRuntime' : (time.time() - fwst) * 1000,
+                'cpuusr' : cpuMetrics[1],
+                'cpunice' : cpuMetrics[2],
+                'cpukrn' : cpuMetrics[3],
+                'cpuidle' : cpuMetrics[4],
+                'cpuiowait' : cpuMetrics[5],
+                'cpuirq' : cpuMetrics[6],
+                'cpusoftirq' : cpuMetrics[7],
+                'cpusteal' : cpuMetrics[8]
                 }

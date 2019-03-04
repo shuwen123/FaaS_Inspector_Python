@@ -19,7 +19,6 @@ def my_handler(event, context):
     myst = time.time()
     vmSpec = Register.profileVM()
     try:
-        
         name = event['name']
         message = 'Hello {} from lambda!'.format(name)  
         vmSpec['message'] = message
