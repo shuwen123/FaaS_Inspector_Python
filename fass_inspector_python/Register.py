@@ -31,7 +31,7 @@ class Register:
                     'vmuptime' : vmbt,
                     'uuid' : myUuid,
                     'newcontainer' : newContainer,
-                    'runtime' : (time.time() - self.__startTime) * 1000,
+                    'runtime' : int(round(time.time() - self.__startTime * 1000)),
                     'cpuUsr' : int(cpuMetrics[1]),
                     'cpuNice' : int(cpuMetrics[2]),
                     'cpuKrn' : int(cpuMetrics[3]),
