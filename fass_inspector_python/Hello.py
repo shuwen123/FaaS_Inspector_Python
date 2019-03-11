@@ -7,7 +7,7 @@
 # output
 
 import logging
-import Register
+from Register import *
 import time
 
 # my_handler is the lambda function on aws that will be called
@@ -16,14 +16,13 @@ import time
 # return JSON with customized fields.
 
 def my_handler(event, context):
-    myst = time.time()
-    vmSpec = Register.profileVM()
+    myReg = Register()
     try:
         name = event['name']
-        message = 'Hello {} from lambda!'.format(name)  
+        message = 'Hello {} from lambda!'.format(name)
+        vmSpec = myReg.profileVM()
         vmSpec['message'] = message
         vmSpec['name'] = name
-        vmSpec['functionRuntime'] = (time.time() - myst) * 1000
         return vmSpec
     except:
         logger = logging.getLogger()

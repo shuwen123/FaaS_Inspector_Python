@@ -15,68 +15,70 @@ import uuid
 import shlex
 import time
 
-
-def __getUpTime():
-    # https://www.quora.com/Whats-the-difference-between-os-system-and-subprocess-call-in-Python
-    # using subprocess.check_output() for linux command
-    cliInput = 'grep btime /proc/stat'
-    args = shlex.split(cliInput)
-    # this returns a bytes object, so I need to decode it into a string.
-    f = subprocess.check_output(args).decode('utf-8')
-    # temp = f.communicate()
-    return int(f.strip().replace('btime ',''))
-
-def __getVmCpuStat():
-    # using os.popen() for linux command
-    p = os.popen('grep \'model name\' /proc/cpuinfo | head -1')
-    result = p.read()
-    temp = re.sub('[\n\t]','', result)
-    return temp.replace('model name: ', '')
-    
-def __getCPUMetrics():
-    p = os.popen('cat /proc/stat | grep "^cpu" | head -1')
-    result = p.read()
-    result = result.split()
-    return result
-
-def __stampContainer():
-    myUuid = ''
-    newContainer = 1
-    if os.path.isfile('/tmp/container-id'):
-        stampFile = open('/tmp/container-id', 'r')
-        stampID = stampFile.readline()
-        myUuid = stampID
-        stampFile.close()
-        # print('im here! read uuid from file!')
-        newContainer = 0
-    else:
-        stampFile = open('/tmp/container-id', 'w')
-        myUuid = str(uuid.uuid4()) # uuid4() generates a random uuid, uuid is not str
-        stampFile.write(myUuid)
-        stampFile.close()
-        # print('im here! write uuid to the file!')
-    return myUuid, newContainer
-
 # event: is the JSON object or message that passed in.
 # return JSON/Dictionary with customized fields.
-def profileVM():
-    fwst = time.time()
-    vmbt = __getUpTime()
-    cpuType = __getVmCpuStat()
-    myUuid, newContainer = __stampContainer()
-    cpuMetrics = __getCPUMetrics()
-    return {
-                'cpuType' : cpuType,
-                'vmuptime' : vmbt,
-                'uuid' : myUuid,
-                'newcontainer' : newContainer,
-                'frameworkRuntime' : (time.time() - fwst) * 1000,
-                'cpuusr' : int(cpuMetrics[1]),
-                'cpunice' : int(cpuMetrics[2]),
-                'cpukrn' : int(cpuMetrics[3]),
-                'cpuidle' : int(cpuMetrics[4]),
-                'cpuiowait' : int(cpuMetrics[5]),
-                'cpuirq' : int(cpuMetrics[6]),
-                'cpusoftirq' : int(cpuMetrics[7]),
-                'cpusteal' : int(cpuMetrics[8])
-                }
+class Register:
+    def __init__(self):
+        self.__startTime = time.time()
+
+    def profileVM(self):
+        vmbt = self.__getUpTime()
+        cpuType = self.__getVmCpuStat()
+        myUuid, newContainer = self.__stampContainer()
+        cpuMetrics = self.__getCPUMetrics()
+        return {
+                    'cpuType' : cpuType,
+                    'vmuptime' : vmbt,
+                    'uuid' : myUuid,
+                    'newcontainer' : newContainer,
+                    'runtime' : (time.time() - self.__startTime) * 1000,
+                    'cpuUsr' : int(cpuMetrics[1]),
+                    'cpuNice' : int(cpuMetrics[2]),
+                    'cpuKrn' : int(cpuMetrics[3]),
+                    'cpuIdle' : int(cpuMetrics[4]),
+                    'cpuIowait' : int(cpuMetrics[5]),
+                    'cpuIrq' : int(cpuMetrics[6]),
+                    'cpuSoftIrq' : int(cpuMetrics[7]),
+                    'vmcpusteal' : int(cpuMetrics[8])
+                    }
+                    
+    def __getUpTime(self):
+    # https://www.quora.com/Whats-the-difference-between-os-system-and-subprocess-call-in-Python
+    # using subprocess.check_output() for linux command
+        cliInput = 'grep btime /proc/stat'
+        args = shlex.split(cliInput)
+        # this returns a bytes object, so I need to decode it into a string.
+        f = subprocess.check_output(args).decode('utf-8')
+        # temp = f.communicate()
+        return int(f.strip().replace('btime ',''))
+
+    def __getVmCpuStat(self):
+        # using os.popen() for linux command
+        p = os.popen('grep \'model name\' /proc/cpuinfo | head -1')
+        result = p.read()
+        temp = re.sub('[\n\t]','', result)
+        return temp.replace('model name: ', '')
+        
+    def __getCPUMetrics(self):
+        p = os.popen('cat /proc/stat | grep "^cpu" | head -1')
+        result = p.read()
+        result = result.split()
+        return result
+    
+    def __stampContainer(self):
+        myUuid = ''
+        newContainer = 1
+        if os.path.isfile('/tmp/container-id'):
+            stampFile = open('/tmp/container-id', 'r')
+            stampID = stampFile.readline()
+            myUuid = stampID
+            stampFile.close()
+            # print('im here! read uuid from file!')
+            newContainer = 0
+        else:
+            stampFile = open('/tmp/container-id', 'w')
+            myUuid = str(uuid.uuid4()) # uuid4() generates a random uuid, uuid is not str
+            stampFile.write(myUuid)
+            stampFile.close()
+            # print('im here! write uuid to the file!')
+        return myUuid, newContainer
